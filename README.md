@@ -20,7 +20,6 @@ emailProject/ \
 -- setup.py \
 -- README.md \
 -- LICENSE \
--- config.ini \
 .
 
 # API Request Flow

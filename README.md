@@ -17,10 +17,9 @@ emailProject/ \
 |-- venv/ \
 -- .gitignore \
 -- requirements.txt \
--- setup.p \
+-- setup.py \
 -- README.md \
 -- LICENSE \
--- config.ini \
 .
 
 # API Request Flow

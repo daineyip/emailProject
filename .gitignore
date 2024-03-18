@@ -9,5 +9,6 @@
 
 /.idea
 /venv
+/app/.DS_Store
 /emailProject.iml
 /personal.txt

@@ -46,7 +46,7 @@ class EmailListener:
                 result, fetch_data = self.connection.fetch(num, '(INTERNALDATE)')
                 if result == "OK":
                     print("result OK from fetching internal date emails")
-                    emails.append((num, self.handleInternalDateMessage(fetch_data)))
+                    emails.append((num, self.getEmailDate(fetch_data)))
                 else:
                     print("Error with fetching email dates")
                     return
@@ -57,11 +57,11 @@ class EmailListener:
             print("Error with retrieving messages")
             return
 
-    def handleInternalDateMessage(self, data):
-        print(data[0])
-        date = self.getEmailDate(data)
-        print(date)
-        return date
+    # def handleInternalDateMessage(self, data):
+    #     print(data[0])
+    #     date = self.getEmailDate(data)
+    #     print(date)
+    #     return date
 
     def getEmailDate(self, data):
         print("in getEmail")

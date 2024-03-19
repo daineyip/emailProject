@@ -42,7 +42,6 @@ class EmailListener:
         if status == "OK":
             decoded_messages = self.decodeMessages(messages)
             print(decoded_messages)
-            print(decoded_messages[0].split())
             for num in decoded_messages:
                 result, fetch_data = self.connection.fetch(num, '(INTERNALDATE)')
                 if result == "OK":
@@ -62,12 +61,6 @@ class EmailListener:
         print(data[0])
         date = self.getEmailDate(data)
         print(date)
-        # email_data = data[1]
-        # print("email data is:" + email_data)
-        # email_date_str = email_data.decode()
-        # print("email date string is:" + email_date_str)
-        # date = self.getEmailDate(email_date_str)
-        # print("email date:" + date)
         return date
 
     def getEmailDate(self, data):
@@ -96,7 +89,7 @@ class EmailListener:
         while True:
             print("Running")
             self.codeListener()
-            time.sleep(60)  # Wait for 1 minute before checking
+            time.sleep(5)  # Wait for 1 minute before checking
 
 if __name__ == "__main__":
     user = os.getenv("USER")

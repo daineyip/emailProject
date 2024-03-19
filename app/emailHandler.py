@@ -1,7 +1,7 @@
 import email
 def process_single_email(emailNum, connection):
     print("fetching data of email")
-    typ, data = connection.fetch(emailNum, '(RFC822)')
+    typ, data = connection.fetch(emailNum, 'BODY.PEEK[]')
     if typ == "OK":
         for part in data:
             if isinstance(part, tuple): # Process the raw email content, usually found in part[1]

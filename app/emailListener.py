@@ -3,8 +3,6 @@ import os
 import time
 import emailHandler
 from datetime import datetime, timedelta
-import email
-from email.header import decode_header
 
 class EmailListener:
     def __init__(self, user, password, server, mailbox):

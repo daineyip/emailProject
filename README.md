@@ -28,3 +28,9 @@ emailProject/ \
 **Email Processing**: The emailHandler takes over, parsing the received email content to extract the 2FA code. It's responsible for interpreting the email's data, ensuring the 2FA code is correctly identified amidst the email content. \
 **Forwarding 2FA Code**: After extracting the 2FA code, the emailHandler passes it to the messageForwarder. This component is tasked with the crucial role of securely transmitting the 2FA code to the user's phone, likely through an SMS or messaging service API. \
 **Completion**: The messageForwarder ensures that the 2FA code is delivered to the intended recipient's phone. Upon successful forwarding, the process concludes, and the system awaits the next email or can shut down if it's a one-time operation.
+
+# Running Application
+1. If you haven't already setup the Python Virtual Environment. Run ```python3 -m venv venv```
+2. Run ```source venv/bin/activate``` to activate the virtual environment
+3. Then enter the credentials for your email. Run ```export USER="example@gmail.com"``` followed by ```export PASS="password"```
+4. Run the main program with ```python3 app/emailListener.py```

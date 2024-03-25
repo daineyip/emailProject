@@ -20,11 +20,12 @@ def process_single_email(emailNum, connection):
             if isinstance(part, tuple): # Process the raw email content, usually found in part[1]
                 header = email.message_from_bytes(part[1])
                 subjectLine = header["SUBJECT"]
+                print(subjectLine)
                 body = getBody(header)
                 text = verificationInstance(subjectLine, body)
                 if (text):
                     try:
-                        messageForwarder.send(text)
+                        messageForwarder.send(connection, emailNum, text.upper())
                     except Exception as e:
                         print(f"Error: {e}")
     else:
@@ -43,10 +44,10 @@ def getBody(header):
         for part in header.walk():
             # Check if the part is text/plain or text/html, depending on what you want
             if part.get_content_type() == "text/plain":
-                body = part.get_payload(decode=True)
+                body = part.get_payload(decode=True).decode("utf-8")
                 return body
         else:
             # Email is not multipart
-            body = header.get_payload(decode=True)
+            body = header.get_payload(decode=True).decode("utf.8")
             return body
 

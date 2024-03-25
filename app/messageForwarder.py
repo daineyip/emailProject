@@ -8,10 +8,17 @@ AUTH = os.getenv("TWILIO_AUTH_TOKEN")
 VIRTUAL_PHONE = os.getenv("TWILIO_VIRTUAL_NUMBER")
 DELIVERY_PHONE = os.getenv("DELIVERY_NUMBER")
 
-def send(forward_message):  # 'forward_message' is the message you want to forward
+def send(connection, emailNum, forward_message):  # 'forward_message' is the message you want to forward
     account_sid = SID  # Replace 'your_account_sid' with your actual Twilio Account SID
     auth_token = AUTH    # Replace 'your_auth_token' with your actual Twilio Auth Token
     client = Client(account_sid, auth_token)
+    typ, data = connection.store(emailNum, '+FLAGS', r'(\Seen)') #Mark email as read
+    if typ == 'OK':
+        print(f"Email {emailNum} marked as read.")
+    else:
+        print(f"Failed to mark email {emailNum} as read.")
+
+    print(forward_message)
 
     message = client.messages.create(
         from_=VIRTUAL_PHONE,  # Replace '+1234567890' with your Twilio phone number

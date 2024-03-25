@@ -3,6 +3,11 @@ import os
 import time
 import emailHandler
 from datetime import datetime, timedelta
+from dotenv import load_dotenv
+
+load_dotenv()
+EMAIL = os.getenv("EMAIL_USERNAME")
+PASS = os.getenv("EMAIL_PASSWORD")
 
 class EmailListener:
     def __init__(self, user, password, server, mailbox):
@@ -92,8 +97,8 @@ class EmailListener:
             time.sleep(5)  # Wait for 1 minute before checking
 
 if __name__ == "__main__":
-    user = os.getenv("USER")
-    password = os.getenv("PASS")
+    user = EMAIL
+    password = PASS
     server = 'imap.gmail.com'
     mailbox = 'inbox'
 

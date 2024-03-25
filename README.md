@@ -32,5 +32,4 @@ emailProject/ \
 # Running Application
 1. If you haven't already setup the Python Virtual Environment. Run ```python3 -m venv venv```
 2. Run ```source venv/bin/activate``` to activate the virtual environment
-3. Then enter the credentials for your email. Run ```export USER="example@gmail.com"``` followed by ```export PASS="password"```
-4. Run the main program with ```python3 app/emailListener.py```
+3. Run the main program with ```python3 app/emailListener.py```

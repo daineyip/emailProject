@@ -12,3 +12,4 @@
 /app/.DS_Store
 /emailProject.iml
 /personal.txt
+secrets.env

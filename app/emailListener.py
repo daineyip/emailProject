@@ -41,11 +41,11 @@ class EmailListener:
         status, messages = self.connection.search(None, search_criteria)
         if status == "OK":
             decoded_messages = self.decodeMessages(messages)
-            print(decoded_messages)
+            # print(decoded_messages)
             for num in decoded_messages:
                 result, fetch_data = self.connection.fetch(num, '(INTERNALDATE)')
                 if result == "OK":
-                    print("result OK from fetching internal date emails")
+                    # print("result OK from fetching internal date emails")
                     emails.append((num, self.getEmailDate(fetch_data)))
                 else:
                     print("Error with fetching email dates")
@@ -64,20 +64,20 @@ class EmailListener:
     #     return date
 
     def getEmailDate(self, data):
-        print("in getEmail")
-        print(data)
+        # print("in getEmail")
+        # print(data)
         if data: # Extract the internal date from the response
             decodedEmail = data[0].decode()  # The internal date is typically enclosed in double quotes
-            print(decodedEmail)
+            # print(decodedEmail)
             parts = decodedEmail.split('"')
-            print(parts[1])
+            # print(parts[1])
             return parts[1]
 
     def decodeMessages(self, messages):
         if messages and isinstance(messages[0], bytes): # Decode the byte string to a regular string and then split
             message_ids = messages[0].decode().split()
-            for n in message_ids:
-                print("decodeMessages: " + n)
+            # for n in message_ids:
+            #     print("decodeMessages: " + n)
             return message_ids
         else:
             print("No messages or messages are not in the expected format.")

@@ -1,5 +1,7 @@
 # Project Structure
 
+This is an Email 2FA scraper, which recognizes when an incoming email is a 2FA verification code and forwards the message to your iPhone iMesssage service. This allows you to use the Apple's 2FA keyboard shortcut when accessing websites that send 2FA verifications via email while on your phone. 
+
 This project is organized into several directories, each with a specific role in the application's architecture: 
 
 emailProject/ \

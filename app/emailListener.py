@@ -1,106 +1,56 @@
 import imaplib
 import os
 import time
+from email.utils import parsedate_to_datetime
+
+from imapclient import IMAPClient
 import emailHandler
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from dotenv import load_dotenv
 
 load_dotenv()
 EMAIL = os.getenv("EMAIL_USERNAME")
 PASS = os.getenv("EMAIL_PASSWORD")
+SERVER = 'imap.gmail.com'
 
 class EmailListener:
-    def __init__(self, user, password, server, mailbox):
-        print("Initializing")
-        self.server = server
-        self.user = user
-        self.password = password
-        self.mailbox = mailbox
-        self.connection = self.connect()
-
-    def connect(self):
-        try:
-            print("Attempting to connect")
-            self.connection = imaplib.IMAP4_SSL(self.server)
-            print("Connected to gmail")
-            self.connection.login(self.user, self.password)
-            print("Connected to personal account")
-            self.connection.select(self.mailbox)
-            print("Connected to 'inbox'")
-            return self.connection
-        except Exception as e:
-            print("Error occurred in connecting: {e}")
-            return None
-
-
-    def codeListener(self): # change criteria to be of specific subject line
-        messages = self.getRelevantEmails()
-        for num in messages:
-            emailHandler.process_single_email(num[0], self.connection)
-        return
-
-    def getRelevantEmails(self): #Retrieve most recent emails
-        emails = []
-        date = (datetime.today() - timedelta(days=1)).strftime("%d-%b-%Y")
-        search_criteria = f'(UNSEEN SINCE "{date}")'
-        status, messages = self.connection.search(None, search_criteria)
-        if status == "OK":
-            decoded_messages = self.decodeMessages(messages)
-            # print(decoded_messages)
-            for num in decoded_messages:
-                result, fetch_data = self.connection.fetch(num, '(INTERNALDATE)')
-                if result == "OK":
-                    # print("result OK from fetching internal date emails")
-                    emails.append((num, self.getEmailDate(fetch_data)))
-                else:
-                    print("Error with fetching email dates")
-                    return
-            sorted_emails = sorted(emails, key=lambda x: datetime.strptime(x[1], "%d-%b-%Y %H:%M:%S %z"), reverse=True)
-            print(sorted_emails)
-            return sorted_emails
+    def fetch_most_recent_email(self, client):
+        # Assuming 'use_uid=True' so UIDs are returned
+        unseen_messages = client.search('UNSEEN')
+        if unseen_messages:
+            most_recent_uid = max(unseen_messages)  # Get the highest UID, which is the most recent
+            response = client.fetch(most_recent_uid, ['ENVELOPE', 'BODY.PEEK[]'])
+            envelope = response[most_recent_uid][b'ENVELOPE']
+            subject = envelope.subject.decode()
+            print(f"Most recent email subject: {subject}")
+            emailHandler.process_single_email(most_recent_uid, client)
         else:
-            print("Error with retrieving messages")
-            return
+            print("No unseen messages found.")
 
-    # def handleInternalDateMessage(self, data):
-    #     print(data[0])
-    #     date = self.getEmailDate(data)
-    #     print(date)
-    #     return date
+    def main(self):
+        with IMAPClient(SERVER, use_uid=True, ssl=True) as client:
+            client.login(EMAIL, PASS)
+            client.select_folder('INBOX')
+            print("Entering IDLE mode. Waiting for new messages...")
 
-    def getEmailDate(self, data):
-        # print("in getEmail")
-        # print(data)
-        if data: # Extract the internal date from the response
-            decodedEmail = data[0].decode()  # The internal date is typically enclosed in double quotes
-            # print(decodedEmail)
-            parts = decodedEmail.split('"')
-            # print(parts[1])
-            return parts[1]
+            try:
+                client.idle()
+                while True:
+                    responses = client.idle_check(timeout=30)
+                    if responses:  # This means there's new activity
+                        print("New activity detected.")
+                        client.idle_done()  # Necessary to temporarily exit IDLE mode to fetch emails
 
-    def decodeMessages(self, messages):
-        if messages and isinstance(messages[0], bytes): # Decode the byte string to a regular string and then split
-            message_ids = messages[0].decode().split()
-            # for n in message_ids:
-            #     print("decodeMessages: " + n)
-            return message_ids
-        else:
-            print("No messages or messages are not in the expected format.")
-            return
-    def run(self):
-        if self.connection is None:
-            print("Failed to connect to mailbox")
-            return
-        while True:
-            print("Running")
-            self.codeListener()
-            time.sleep(5)  # Wait for 1 minute before checking
+                        self.fetch_most_recent_email(client)  # Fetch and process the most recent email
+
+                        client.idle()  # Re-enter IDLE mode to continue waiting for new messages
+                    else:
+                        print("No new activity. Re-checking...")
+
+            except KeyboardInterrupt:
+                print("Exiting...")
+                client.idle_done()
 
 if __name__ == "__main__":
-    user = EMAIL
-    password = PASS
-    server = 'imap.gmail.com'
-    mailbox = 'inbox'
-
-    listener = EmailListener(user, password, server, mailbox)
-    listener.run()
+    emailListener = EmailListener()
+    emailListener.main()

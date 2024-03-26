@@ -12,12 +12,8 @@ def send(connection, emailNum, forward_message):  # 'forward_message' is the mes
     account_sid = SID  # Replace 'your_account_sid' with your actual Twilio Account SID
     auth_token = AUTH    # Replace 'your_auth_token' with your actual Twilio Auth Token
     client = Client(account_sid, auth_token)
-    typ, data = connection.store(emailNum, '+FLAGS', r'(\Seen)') #Mark email as read
-    if typ == 'OK':
-        print(f"Email {emailNum} marked as read.")
-    else:
-        print(f"Failed to mark email {emailNum} as read.")
-
+    connection.add_flags(emailNum, [r'\Seen'])
+    print(f"Email {emailNum} marked as read.")
     print(forward_message)
 
     message = client.messages.create(
